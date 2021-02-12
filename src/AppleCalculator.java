@@ -2,9 +2,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 public class AppleCalculator extends JFrame{
   private JTextField inputSpace;
+  private ArrayList<String> equation = new ArrayList<String>();
+  private String num="";
 
   public AppleCalculator() {
     setLayout(null);
@@ -20,7 +23,7 @@ public class AppleCalculator extends JFrame{
     buttonPanel.setLayout(new GridLayout(5,4,0,0));
     buttonPanel.setBounds(0,62,280,235);
 
-    String[] buttonNames = {"C","±","%","÷","7","8","9","X","4","5","6","-","1","2","3","+","0","0",".","="};
+    String[] buttonNames = {"C","±","%","÷","7","8","9","x","4","5","6","-","1","2","3","+","0","0",".","="};
     JButton[] buttons = new JButton[buttonNames.length];
 
     for(int i=0; i<buttonNames.length; i++){
@@ -53,11 +56,67 @@ public class AppleCalculator extends JFrame{
     public void actionPerformed(ActionEvent e) {
       String operation = e.getActionCommand();
       if(operation.equals("C")) inputSpace.setText("");
-      else if(operation.equals("=")) {}
+      else if(operation.equals("=")) {
+        String result = Double.toString(calculate(inputSpace.getText()));
+        inputSpace.setText(""+result);
+        num="";
+      } else if(operation.equals("±")) {
+        String result = inputSpace.getText();
+        String retResult = "";
+        char ch = result.charAt(0);
+        if(ch == '-') {
+          for(int i=1; i<result.length();i++){
+            char ar = result.charAt(i);
+            retResult = retResult + ar;
+          }
+          inputSpace.setText(""+retResult);
+        } else {
+        inputSpace.setText("-"+inputSpace.getText());
+        }
+      }
       else inputSpace.setText(inputSpace.getText()+e.getActionCommand());
     }
   }
 
+  public void fullTextParsing(String inputText){
+    equation.clear();
+    for(int i=0; i<inputText.length(); i++){
+      char ch = inputText.charAt(i);
+      if(ch=='+' || ch=='-' || ch=='x' || ch=='÷' || ch=='%'){
+        equation.add(num);
+        num = "";
+        equation.add(ch+"");
+      }
+      else {
+        num = num + ch;
+      }
+    }
+    equation.add(num);
+  }
+
+  public double calculate(String inputText){
+    fullTextParsing(inputText);
+    double prev = 0;
+    double current = 0;
+    String mode = "";
+    for(String s: equation){
+      if(s.equals("+")) mode = "add";
+      else if(s.equals("-")) mode = "sub";
+      else if(s.equals("x")) mode = "mul";
+      else if(s.equals("÷")) mode = "div";
+      else if(s.equals("%")) mode = "mod";
+      else {
+        current = Double.parseDouble(s);
+        if(mode.equals("add")) prev += current;
+        else if(mode.equals("sub")) prev -= current;
+        else if(mode.equals("mul")) prev *= current;
+        else if(mode.equals("div")) prev /= current;
+        else if(mode.equals("mod")) prev %= current;
+        else prev = current;
+      }
+    }
+    return prev;
+  }
 
   public static void main(String[] args){
     new AppleCalculator();
