@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class AppleCalculator extends JFrame{
   private JTextField inputSpace;
@@ -8,9 +10,11 @@ public class AppleCalculator extends JFrame{
     setLayout(null);
     inputSpace = new JTextField();
     inputSpace.setEditable(false);
+    inputSpace.setForeground(Color.WHITE);
     inputSpace.setBackground(Color.DARK_GRAY);
-    inputSpace.setFont(new Font("Arial",Font.BOLD, 50));
+    inputSpace.setFont(new Font("Arial",Font.PLAIN, 50));
     inputSpace.setBounds(-3,-3,287,70);
+    inputSpace.setHorizontalAlignment(JTextField.RIGHT);
 
     JPanel buttonPanel = new JPanel();
     buttonPanel.setLayout(new GridLayout(5,4,0,0));
@@ -28,6 +32,7 @@ public class AppleCalculator extends JFrame{
       buttons[i].setForeground(Color.WHITE);
       buttons[i].setOpaque(true);
       buttons[i].setBorderPainted(false);
+      buttons[i].addActionListener(new PadActionListener());
       buttonPanel.add(buttons[i]);
 
     }
@@ -42,6 +47,15 @@ public class AppleCalculator extends JFrame{
     setResizable(false);
     setVisible(true);
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+  }
+
+  class PadActionListener implements ActionListener{
+    public void actionPerformed(ActionEvent e) {
+      String operation = e.getActionCommand();
+      if(operation.equals("C")) inputSpace.setText("");
+      else if(operation.equals("=")) {}
+      else inputSpace.setText(inputSpace.getText()+e.getActionCommand());
+    }
   }
 
 
